@@ -1,37 +1,26 @@
-## Welcome to GitHub Pages
+### Q: My e-mail passed DMARC validation but stil getting into the SPAM folder.
 
-You can use the [editor on GitHub](https://github.com/mkutny/dmarc/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+We'll show you how to troubleshoot this a bit later but first things first: properly setup DMARC policy does not guarantee that your mail be classified as not SPAM. If you have such expectation I'd suggest you to keep reading but if you just don't care and want to troubleshoot skip to the end of the article.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+While preparing this post I checked my Gmail's SPAM folder and found out there two messages from quite reputable senders: Airbnb and Whitehouse. They both passed DMARC validation but still Google thinks they are SPAM.
 
-### Markdown
+Sometimes DMARC is referred to (erroneously) as anti-spam technique and this sets improper expectations. But DMARC was born to fight spoofing not spam and these are totally different concepts.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+DMARC protects your **From:** address from spoofing by:
 
-```markdown
-Syntax highlighted code block
+1. authenticating your outgoing mail
+2. providing an addressee with means to check if it's authenticated or not
 
-# Header 1
-## Header 2
-### Header 3
+While you can write DMARC policy which instructs your addressee to dump your unauthenticated mail into SPAM folder the opposite is not true. There is no such policy which could instruct an adressee to bypass her SPAM filter and place your authenticated mail right into Inbox.
 
-- Bulleted
-- List
+Authentication is a simple technique and if this trick worked out all spammers would send authenticated spam to guarantee the delivery.
 
-1. Numbered
-2. List
+Therefore after adressee's MX performed DMARC validation it tosses your mail through the SPAM filter. If your DMARC policy does not instruct the addressee to reject or dump your unauthenticated mail then the SPAM filter decides for itself. Usually authenticated mail ranks better than unauthenticated so it has more chances to hit the Inbox but there is no guarantee.
 
-**Bold** and _Italic_ and `Code` text
+#### Troubleshooting
 
-[Link](url) and ![Image](src)
-```
+1. First thing is to know is why exactly your mail goes into the SPAM folder. It might be DMARC related (if you setup your policy to **quaranteen** unauthenticated mail) but is usually related to poor content (e.g. your test mail has empty subject/body).
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Send your mail to q2js3e@dmarchub.com and find below what our SPAM filter thinks of it.
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mkutny/dmarc/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+2. If it's content related you'll have to work on your content. If it's your DMARC policy is who sending it to SPAM it means that your mail is not authenticated.
